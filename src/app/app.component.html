@@ -1,0 +1,21 @@
+<!--The content below is only a placeholder and can be replaced.-->
+<mat-toolbar color="primary">
+  <button mat-icon-button [matMenuTriggerFor]="menu">
+    <mat-icon>more_vert</mat-icon>
+  </button>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item  routerLink="" routerLinkActive="active">
+      <mat-icon>home</mat-icon>
+      <span>Home</span>
+    </button>
+    <button mat-menu-item routerLink="/table-poc" routerLinkActive="active">
+      <mat-icon>grid_on</mat-icon>
+      <span>Table</span>
+    </button>
+  </mat-menu>
+
+  <span>eoSearch - Angualr 5 - PoC</span>
+</mat-toolbar>
+<router-outlet></router-outlet>
+
+
