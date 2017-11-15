@@ -37,6 +37,11 @@ export class TableComponent implements OnInit, AfterViewInit {
         .subscribe(rows => {
           console.log('Result= ' + JSON.stringify({ data: rows}, null, 4));
           this.dataSource.data = rows;
+          // store the rows in the local storage
+          localStorage.setItem('rows', JSON.stringify(rows));
+
+          // store the rows in the session storage
+          sessionStorage.setItem('rows', JSON.stringify(rows));
         });
     }, 500);
   }
