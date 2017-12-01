@@ -14,6 +14,7 @@ import {
   MatPaginatorModule,
   MatSidenavModule,
   MatSortModule,
+  MatProgressSpinnerModule,
   MatToolbarModule,
   MatTooltipModule,
 } from '@angular/material';
@@ -38,7 +39,8 @@ const materialModules = [
   MatTooltipModule,
   MatTableModule,
   MatSortModule,
-  MatPaginatorModule
+  MatPaginatorModule,
+  MatProgressSpinnerModule
 ];
 
 const pipes = [

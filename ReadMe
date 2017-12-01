@@ -1,0 +1,6 @@
+npm install @angular/animations@latest @angular/common@latest @angular/compiler@latest @angular/compiler-cli@latest @angular/core@latest @angular/forms@latest @angular/http@latest @angular/platform-browser@latest @angular/platform-browser-dynamic@latest @angular/platform-server@latest @angular/router@latest rxjs@latest --save
+npm install --save @angular/material@latest @angular/cdk@latest
+npm install --save @angular/animations@latest
+
+
+npm i angularjs-scroll-glue

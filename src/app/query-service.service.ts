@@ -22,4 +22,11 @@ export class QueryService {
     return of([]);
   }
 
+  getResultsByPage(offset: number, length: number): Observable<OutputRecord[]> {
+    return of([]);
+  }
+
+  getResultNumber(): Observable<number> {
+    return of(0);
+  }
 }

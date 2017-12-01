@@ -1,4 +1,7 @@
 /* Structure */
+
+$table-cell-padding: 0 10px 0 10px;
+
 .example-container {
   display: flex;
   flex-direction: column;
@@ -19,3 +22,50 @@
   overflow: auto;
   max-height: 500px;
 }
+
+
+.example-loading-shade {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 56px;
+  right: 0;
+  background: rgba(0, 0, 0, 0.15);
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+/* workaround for cell no-wrap*/
+.mat-table {
+  display: table;
+  width: 100%;
+
+  > .mat-header-row, > .mat-row {
+
+    display: table-row;
+    padding: 1em;
+    border: none;
+    white-space: nowrap;
+
+
+    > .mat-header-cell, > .mat-cell {
+      white-space: nowrap;
+      padding: $table-cell-padding;
+      display: table-cell;
+      height: 48px;
+      vertical-align: middle;
+
+      border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    }
+  }
+}
+.mat-cell, .mat-header-cell {
+  overflow: hidden;
+  word-wrap: break-word;
+  white-space: nowrap;
+  padding: $table-cell-padding;
+}
+

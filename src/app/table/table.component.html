@@ -6,6 +6,11 @@
     </mat-form-field>
   </div>
 
+  <div class="example-loading-shade"
+       *ngIf="isLoadingResults">
+    <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+  </div>
+
   <mat-table #table
              [dataSource]="dataSource"
              matSort
@@ -30,6 +35,10 @@
 
 
   </mat-table>
-  <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
-
+  <!--<mat-paginator [length]="resultsLength" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>-->
+  <mat-paginator
+    [length]="resultsLength"
+    [pageSizeOptions]="[5, 10, 25, 100]"
+    >
+  </mat-paginator>
 </div>

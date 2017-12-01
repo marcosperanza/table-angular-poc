@@ -1,8 +1,13 @@
-import {AfterViewChecked, AfterViewInit, Component, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
-import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
+import {AfterViewInit, Component, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
+import {MatPaginator, MatSort, MatTableDataSource, PageEvent} from '@angular/material';
 import {QueryService} from '../query-service.service';
 import {ColumnModel} from '../shared/ColumnModel';
 import {OutputRecord} from '../shared/OutputRecord';
+import {catchError, startWith, switchMap} from 'rxjs/operators';
+import {of as observableOf} from 'rxjs/observable/of';
+import {merge} from 'rxjs/observable/merge';
+import {map} from 'rxjs/operators/map';
+import {timer} from "rxjs/observable/timer";
 
 
 @Component({
@@ -15,6 +20,8 @@ export class TableComponent implements OnInit, AfterViewInit {
   columnModelMeta: ColumnModel[] = [];
   displayedColumns: string[] = [];
   dataSource = new MatTableDataSource<OutputRecord>();
+  isLoadingResults = false;
+  resultsLength = 0;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -32,22 +39,38 @@ export class TableComponent implements OnInit, AfterViewInit {
 
 
   ngAfterViewInit() {
-    setTimeout(() => {
-      this.queryService.getResults()
-        .subscribe(rows => {
-          console.log('Result= ' + JSON.stringify({ data: rows}, null, 4));
-          this.dataSource.data = rows;
-          // store the rows in the local storage
-          localStorage.setItem('rows', JSON.stringify(rows));
 
-          // store the rows in the session storage
-          sessionStorage.setItem('rows', JSON.stringify(rows));
-        });
-    }, 500);
+
+    merge(this.paginator.page)
+      .pipe(
+        startWith({}),
+        switchMap(() => {
+          this.isLoadingResults = true;
+          return this.queryService.getResultNumber();
+        }),
+        switchMap(rowNum => {
+          // Flip flag to show that loading has finished.
+          this.isLoadingResults = true;
+          this.resultsLength = rowNum;
+          return this.queryService.getResultsByPage(this.paginator.pageIndex * this.paginator.pageSize, this.paginator.pageSize);
+        }),
+        map(data => {
+          // Flip flag to show that loading has finished.
+          this.isLoadingResults = false;
+          return data;
+        }),
+        catchError(() => {
+          this.isLoadingResults = false;
+          return observableOf([]);
+        })
+      ).subscribe(data => {
+        this.dataSource.data = data;
+    });
+
   }
 
   ngOnInit() {
-    this.dataSource.paginator = this.paginator;
+    // this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
 
     this.queryService.getColumnModel().subscribe( columnModel => {
@@ -58,10 +81,6 @@ export class TableComponent implements OnInit, AfterViewInit {
     });
   }
 
-
-  getDataa() {
-    return 'ciaoo';
-  }
 
 }
 
