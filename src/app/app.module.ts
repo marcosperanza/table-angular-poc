@@ -26,6 +26,7 @@ import {QueryService} from './query-service.service';
 import {HttpClientModule} from '@angular/common/http';
 import {HttpMockQueryService} from './mock/http-mock-query.service';
 import {FormatTimeValue} from './pipe/format-time-value.pipe';
+import { TrackScrolDirective } from './directive/track-scrol.directive';
 
 const materialModules = [
   MatButtonModule,
@@ -53,7 +54,8 @@ const pipes = [
     AppComponent,
     MenuComponent,
     TableComponent,
-    pipes
+    pipes,
+    TrackScrolDirective
   ],
   imports: [
     BrowserModule,

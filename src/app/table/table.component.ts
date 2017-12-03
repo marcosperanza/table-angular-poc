@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
-import {MatPaginator, MatSort, MatTableDataSource, PageEvent} from '@angular/material';
+import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
 import {QueryService} from '../query-service.service';
 import {ColumnModel} from '../shared/ColumnModel';
 import {OutputRecord} from '../shared/OutputRecord';
@@ -7,7 +7,6 @@ import {catchError, startWith, switchMap} from 'rxjs/operators';
 import {of as observableOf} from 'rxjs/observable/of';
 import {merge} from 'rxjs/observable/merge';
 import {map} from 'rxjs/operators/map';
-import {timer} from "rxjs/observable/timer";
 
 
 @Component({
@@ -39,7 +38,6 @@ export class TableComponent implements OnInit, AfterViewInit {
 
 
   ngAfterViewInit() {
-
 
     merge(this.paginator.page)
       .pipe(

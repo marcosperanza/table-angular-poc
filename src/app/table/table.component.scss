@@ -38,7 +38,7 @@ $table-cell-padding: 0 10px 0 10px;
 }
 
 
-/* workaround for cell no-wrap*/
+/* workaround for cell no-wrap*!*/
 .mat-table {
   display: table;
   width: 100%;
@@ -62,10 +62,16 @@ $table-cell-padding: 0 10px 0 10px;
     }
   }
 }
-.mat-cell, .mat-header-cell {
+.mat-header-cell {
   overflow: hidden;
   word-wrap: break-word;
   white-space: nowrap;
   padding: $table-cell-padding;
+  background-color: white;
+
+  // Note doesn't work on firefox!!!
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0px;
 }
 

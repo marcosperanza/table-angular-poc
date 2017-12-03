@@ -8,7 +8,7 @@ export class FormatTimeValue implements PipeTransform {
 
   transform(value: string, columnType: Type, format?: string): string {
 
-    console.log('FormatTimeValue: value: ' + value + ' type: ' + columnType + ' format: ' + format);
+    //console.log('FormatTimeValue: value: ' + value + ' type: ' + columnType + ' format: ' + format);
 
     switch (columnType) {
       case Type.TIME:
