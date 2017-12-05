@@ -27,6 +27,7 @@ import {HttpClientModule} from '@angular/common/http';
 import {HttpMockQueryService} from './mock/http-mock-query.service';
 import {FormatTimeValue} from './pipe/format-time-value.pipe';
 import { TrackScrolDirective } from './directive/track-scrol.directive';
+import {WebsocketService} from "./service/websocket.service";
 
 const materialModules = [
   MatButtonModule,
@@ -69,7 +70,10 @@ const pipes = [
 
   ],
 
-  providers: [{ provide: QueryService, useClass: HttpMockQueryService }],
+  providers: [
+    { provide: QueryService, useClass: HttpMockQueryService },
+    { provide: WebsocketService, useClass: WebsocketService },
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

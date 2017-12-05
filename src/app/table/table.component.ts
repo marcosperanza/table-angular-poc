@@ -7,6 +7,8 @@ import {catchError, startWith, switchMap} from 'rxjs/operators';
 import {of as observableOf} from 'rxjs/observable/of';
 import {merge} from 'rxjs/observable/merge';
 import {map} from 'rxjs/operators/map';
+import {FetchResult} from "../shared/FetchResult";
+import {WebsocketService} from "../service/websocket.service";
 
 
 @Component({
@@ -25,7 +27,8 @@ export class TableComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
-  constructor(private queryService: QueryService) {
+  constructor(private queryService: QueryService,
+              private websockets: WebsocketService) {
 
   }
 
@@ -38,6 +41,20 @@ export class TableComponent implements OnInit, AfterViewInit {
 
 
   ngAfterViewInit() {
+    //initialize the WebSockets listeners
+    if (this.websockets.dataStream) {
+      this.websockets.dataStream.subscribe(
+        (data) => {
+          console.log(">>> WS DATA: " + data)
+        },
+        (error) => {
+          console.log(">>> WS ERROR " + error)
+        },
+        () => {
+          console.log(">>> WS COMPLETED")
+        });
+    }
+
 
     merge(this.paginator.page)
       .pipe(
@@ -59,10 +76,12 @@ export class TableComponent implements OnInit, AfterViewInit {
         }),
         catchError(() => {
           this.isLoadingResults = false;
-          return observableOf([]);
+          return observableOf(<FetchResult>{fetchId: -1, records: [], offset: 0});
         })
       ).subscribe(data => {
-        this.dataSource.data = data;
+        if (data.fetchId === -1) {
+          this.dataSource.data = data.records;
+        }
     });
 
   }

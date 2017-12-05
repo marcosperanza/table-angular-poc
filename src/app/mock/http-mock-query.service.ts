@@ -4,6 +4,7 @@ import {ColumnModel} from '../shared/ColumnModel';
 import {QueryService} from '../query-service.service';
 import {HttpClient} from '@angular/common/http';
 import {OutputRecord} from '../shared/OutputRecord';
+import {FetchResult} from "../shared/FetchResult";
 
 @Injectable()
 export class HttpMockQueryService implements  QueryService {
@@ -26,8 +27,8 @@ export class HttpMockQueryService implements  QueryService {
     return this.http.get<any[]>(this.host + '/api/fetch');
   }
 
-  getResultsByPage(offset: number, length: number): Observable<OutputRecord[]> {
-    return this.http.get<any[]>(this.host + '/api/fetch?o=' + offset + '&l=' + length);
+  getResultsByPage(offset: number, length: number): Observable<FetchResult> {
+    return this.http.get<FetchResult>(this.host + '/api/fetch?o=' + offset + '&l=' + length);
   }
 
   getResultNumber(): Observable<number> {

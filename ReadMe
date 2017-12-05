@@ -4,3 +4,6 @@ npm install --save @angular/animations@latest
 
 
 http://element-cn.eleme.io/#/en-US/component/table
+
+npm install --save @types/atmosphere.js
+npm install --save atmosphere.js
