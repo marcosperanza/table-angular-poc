@@ -3,12 +3,15 @@ import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
 import {QueryService} from '../query-service.service';
 import {ColumnModel} from '../shared/ColumnModel';
 import {OutputRecord} from '../shared/OutputRecord';
-import {catchError, startWith, switchMap} from 'rxjs/operators';
+import {bufferTime, catchError, debounceTime, startWith, switchMap} from 'rxjs/operators';
 import {of as observableOf} from 'rxjs/observable/of';
+import * as Rx from 'rxjs';
 import {merge} from 'rxjs/observable/merge';
 import {map} from 'rxjs/operators/map';
 import {FetchResult} from "../shared/FetchResult";
 import {WebsocketService} from "../service/websocket.service";
+import {Subscription} from "rxjs/Subscription";
+import {OutputRecordFetched} from "../shared/OutputRecordFetched";
 
 
 @Component({
@@ -23,6 +26,10 @@ export class TableComponent implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<OutputRecord>();
   isLoadingResults = false;
   resultsLength = 0;
+  _internalPage: OutputRecord[] = [];
+
+  outRecordSubscription: Subscription;
+  stateUpdateSubscription: Subscription;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -35,24 +42,36 @@ export class TableComponent implements OnInit, AfterViewInit {
 
   applyFilter(filterValue: string) {
     filterValue = filterValue.trim(); // Remove whitespace
-    filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
+    filterValue = filterValue.toLowerCase(); // MatTableDataSource defauls to lowercase matches
     this.dataSource.filter = filterValue;
   }
 
 
   ngAfterViewInit() {
+
     //initialize the WebSockets listeners
-    if (this.websockets.dataStream) {
-      this.websockets.dataStream.subscribe(
-        (data) => {
-          console.log(">>> WS DATA: " + data)
-        },
-        (error) => {
-          console.log(">>> WS ERROR " + error)
-        },
-        () => {
-          console.log(">>> WS COMPLETED")
-        });
+    if (this.websockets) {
+      //backpressure to buffer events
+      let outputRecord: Rx.Observable<OutputRecordFetched[]> = this.websockets.listener.outputRecord
+        .pipe(
+          bufferTime(200)
+      );
+
+      this.outRecordSubscription = outputRecord.subscribe((n) => {
+        if(n.length === 0) return;
+        console.log("> WS DATA: " + JSON.stringify(n,null,"    "));
+
+        for (let row of n) {
+          this._internalPage.splice(row.offset, 0, ...row.outputRecords);
+        }
+        this.dataSource.data = this._internalPage;
+      });
+
+      this.stateUpdateSubscription = this.websockets.listener.stateUpdate.subscribe((n) => {
+        this.resultsLength = n.resultCount;
+      });
+
+      //TODO rememeber to unsubscribe the listerns.
     }
 
 
@@ -60,6 +79,9 @@ export class TableComponent implements OnInit, AfterViewInit {
       .pipe(
         startWith({}),
         switchMap(() => {
+          this._internalPage.splice(0, this._internalPage.length);
+          this.dataSource.data = this._internalPage;
+
           this.isLoadingResults = true;
           return this.queryService.getResultNumber();
         }),
@@ -81,6 +103,7 @@ export class TableComponent implements OnInit, AfterViewInit {
       ).subscribe(data => {
         if (data.fetchId === -1) {
           this.dataSource.data = data.records;
+          //this.dataSource.data.push(data.records);
         }
     });
 

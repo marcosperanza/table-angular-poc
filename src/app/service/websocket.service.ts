@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import * as Rx from 'rxjs';
 import * as Atmosphere from 'atmosphere.js';
 import {Subject} from 'rxjs/Subject';
+import {WebsocketEventListener} from "./websocket-event-listener";
 
 
 
@@ -14,9 +15,12 @@ export class  WebsocketService {
   private subSocket: any;
   private request: Atmosphere.Request;
 
-  public dataStream: Subject<any> = new Subject<any>();
+  public listener: WebsocketEventListener = new WebsocketEventListener();
 
+
+ // public dataStream: Subject<any> = new Subject<any>();
   constructor() {
+
     this.request = <Atmosphere.Request>{
       url: this.url,
       contentType: 'application/json',
@@ -25,15 +29,17 @@ export class  WebsocketService {
       fallbackTransport: 'long-polling',
       onOpen: (response: Atmosphere.Response) => {
         console.log('Atmosphere connected using ' + response.transport);
+        this.listener.onOpen(response.responseBody);
+
       },
       onMessage: (response: Atmosphere.Response) => {
-        this.dataStream.next(response);
+        this.listener.onNext(response.responseBody);
       },
       onClose: (response: Atmosphere.Response) => {
-        this.dataStream.complete();
+        this.listener.onComplete();
       },
       onError: (response: Atmosphere.Response) => {
-        this.dataStream.error(response);
+        this.listener.onError(response.responseBody);
       }
     };
 

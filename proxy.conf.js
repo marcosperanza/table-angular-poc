@@ -10,8 +10,9 @@ const PROXY_CONFIG = [
     context: [
       "/ws"
     ],
-    target: "http://localhost:8091",
-    secure: false
+    target: "http://localhost:8090",
+    secure: false,
+    "ws":true
   }
 ]
 
